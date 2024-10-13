@@ -13,4 +13,18 @@ export const useAuth = () => {
       router.push('/login')
     }
   }, [router])
+
+  // ログイン時にカスタムイベントを発火させる関数
+  const login = () => {
+    const event = new Event('authChange')
+    window.dispatchEvent(event)
+  }
+
+  // ログアウト時にカスタムイベントを発火させる関数
+  const logout = () => {
+    const event = new Event('authChange')
+    window.dispatchEvent(event)
+  }
+
+  return { login, logout }
 }

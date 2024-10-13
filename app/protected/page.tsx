@@ -5,13 +5,15 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '../../hook/useAuth'
+import Profile from '../../components/Profile'
 
 interface ProtectedData {
   message: string
-  data: {
-    username: string
+  user: {
+    name: string
     iat: number
     exp: number
+    createdAt: string
   }
 }
 
@@ -28,8 +30,8 @@ const ProtectedPage: React.FC = () => {
         return
       }
       try {
-        const res = await axios.get<ProtectedData>('http://localhost:8010/users/user', {
-          headers: { Authorization: token },
+        const res = await axios.get<ProtectedData>(`${process.env.NEXT_PUBLIC_API_URL}/users/user`, {
+          headers: { Authorization: token }, // Bearerトークンとして送信
         })
         setData(res.data)
       } catch (error) {
@@ -41,13 +43,14 @@ const ProtectedPage: React.FC = () => {
     fetchProtectedData()
   }, [router])
 
-  if (!data) return <p>ロード中...</p>
+  if (!data) return <p className="text-center">ロード中...</p>
 
+  console.log(data)
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-      <h1>保護されたページ</h1>
-      <p>{data.message}</p>
-      <pre>{JSON.stringify(data.data, null, 2)}</pre>
+    <div className="max-w-3xl mx-auto p-6 bg-white dark:bg-gray-800 rounded shadow">
+      <h1 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">プロフィール</h1>
+      <p className="mb-4 text-gray-700 dark:text-gray-300">{data.message}</p>
+      <Profile name={data.user.name} iat={data.user.iat} exp={data.user.exp} createdAt={data.user.createdAt}/>
     </div>
   )
 }
